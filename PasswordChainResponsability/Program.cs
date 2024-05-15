@@ -34,12 +34,12 @@
             return Next;
         }
 
-        public abstract void Control(string password);
+        public abstract (string error, bool valid) Control(string password);
     }
 
     public class Lenght : Approver
     {
-        public override void Control(string password)
+        public override (string error, bool valid) Control(string password)
         {
 
             if (password.Length >= 8)
@@ -51,13 +51,20 @@
                 errors="The password must be at least 8 character long \n" + errors;
                 aproved = false;
             }
-            Next?.Control(password);
+            
+            var result = Next?.Control(password);
+            if (result.HasValue)
+            {
+                errors += result.Value.Item1;
+                aproved = result.Value.Item2;
+            }
+            return (errors, aproved);
         }
     }
 
     public class NNumbers : Approver
     {
-        public override void Control(string password)
+        public override (string error, bool valid) Control(string password)
         {
             if (password.Count(char.IsDigit)>=2)
             {
@@ -68,13 +75,19 @@
                errors+="The password must have at least 2 number \n";
                aproved = false;
             }
-            Next?.Control(password);
+            var result = Next?.Control(password);
+            if (result.HasValue)
+            {
+                errors += result.Value.Item1;
+                aproved = result.Value.Item2;
+            }
+            return (errors, aproved);
         }
     }
 
     public class UpperCase : Approver
     {
-        public override void Control(string password)
+        public override (string error, bool valid) Control(string password)
         {
             if (password.Any(char.IsUpper))
             {
@@ -85,13 +98,19 @@
                 errors+=("The password must have at least 1 upper case letter \n");
                 aproved = false;
             }
-            Next?.Control(password);
+            var result = Next?.Control(password);
+            if (result.HasValue)
+            {
+                errors += result.Value.Item1;
+                aproved = result.Value.Item2;
+            }
+            return (errors, aproved);
         }
     }
 
     public class SpecialCharacter : Approver
     {
-        public override void Control(string password)
+        public override (string error, bool valid) Control(string password)
         {
             var specialCharacters = "!@#$%^&*()-_+=[]{}|;:',.<>?/";
             if (password.Any(c => !char.IsLetterOrDigit(c) && specialCharacters.Contains(c)))
@@ -103,7 +122,13 @@
                 errors+=("The password must have at least 1 special character \n");
                 aproved = false;
             }
-            Next?.Control(password);
+            var result = Next?.Control(password);
+            if (result.HasValue)
+            {
+                errors += result.Value.Item1;
+                aproved = result.Value.Item2;
+            }
+            return (errors, aproved);
         }
     }
 }
