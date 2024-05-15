@@ -1,4 +1,6 @@
-﻿namespace PasswordChainResponsability
+﻿using static System.Runtime.InteropServices.JavaScript.JSType;
+
+namespace PasswordChainResponsability
 {
     internal class Program
     {
@@ -9,21 +11,25 @@
             var upperCase = new UpperCase();
             var specialCharacter = new SpecialCharacter();
 
+            var errorTracker = new ErrorTracker();
+
 
             lenght.SetSuccessor(nNumbers).SetSuccessor(upperCase).SetSuccessor(specialCharacter);
 
             Console.WriteLine("Write hte new password");
             string password = Console.ReadLine();
-            lenght.Control(password);
-            Console.WriteLine(lenght.errors);
-            Console.WriteLine(lenght.aproved);
+            ErrorTracker check = lenght.Control(password, errorTracker);
+            Console.WriteLine(check.error);
+            Console.WriteLine(check.valid);
+            //Console.WriteLine(lenght.errors);
+            //Console.WriteLine(lenght.aproved);
         }
     }
 
     public abstract class Approver
     {
-        public bool aproved = true;
-        public string errors = "";
+        //public bool aproved = true;
+        //public string errors = "";
         protected Approver? Next;
 
         public Approver SetSuccessor(Approver next)
@@ -34,101 +40,92 @@
             return Next;
         }
 
-        public abstract (string error, bool valid) Control(string password);
+        public abstract ErrorTracker Control(string password, ErrorTracker errorTracker);
+    }
+
+    public class ErrorTracker
+    {
+        public string error {get;set;}
+        public bool valid { get;set;}
+
+        public ErrorTracker()
+        {
+            error = "w";
+            valid = true;
+        }
     }
 
     public class Lenght : Approver
     {
-        public override (string error, bool valid) Control(string password)
+        public override ErrorTracker Control(string password, ErrorTracker errorTracker)
         {
-
-            if (password.Length >= 8)
+            if (password.Length >= 8 && errorTracker.valid == true)
             {
-                //Next?.Control(password);
+                errorTracker.valid = true;
             }
             else
             {
-                errors="The password must be at least 8 character long \n" + errors;
-                aproved = false;
+                errorTracker.error+="The password must be at least 8 character long \n";
+                errorTracker.valid = false;
             }
             
-            var result = Next?.Control(password);
-            if (result.HasValue)
-            {
-                errors += result.Value.Item1;
-                aproved = result.Value.Item2;
-            }
-            return (errors, aproved);
+            var result = Next?.Control(password, errorTracker);
+            return errorTracker;
         }
     }
 
     public class NNumbers : Approver
     {
-        public override (string error, bool valid) Control(string password)
+        public override ErrorTracker Control(string password, ErrorTracker errorTracker)
         {
-            if (password.Count(char.IsDigit)>=2)
+            if (password.Count(char.IsDigit)>=2 && errorTracker.valid == true)
             {
-                //Next?.Control(password);
+                errorTracker.valid = true;
             }
             else
             {
-               errors+="The password must have at least 2 number \n";
-               aproved = false;
+               errorTracker.error+="The password must have at least 2 number \n";
+               errorTracker.valid = false;
             }
-            var result = Next?.Control(password);
-            if (result.HasValue)
-            {
-                errors += result.Value.Item1;
-                aproved = result.Value.Item2;
-            }
-            return (errors, aproved);
+            var result = Next?.Control(password, errorTracker);
+            return errorTracker;
         }
     }
 
     public class UpperCase : Approver
     {
-        public override (string error, bool valid) Control(string password)
+        public override ErrorTracker Control(string password, ErrorTracker errorTracker)
         {
-            if (password.Any(char.IsUpper))
+            if (password.Any(char.IsUpper) && errorTracker.valid == true)
             {
-                //Next?.Control(password);
+                errorTracker.valid = true;
             }
             else
             {
-                errors+=("The password must have at least 1 upper case letter \n");
-                aproved = false;
+                errorTracker.error+=("The password must have at least 1 upper case letter \n");
+                errorTracker.valid = false;
             }
-            var result = Next?.Control(password);
-            if (result.HasValue)
-            {
-                errors += result.Value.Item1;
-                aproved = result.Value.Item2;
-            }
-            return (errors, aproved);
+            var result = Next?.Control(password, errorTracker);
+            return errorTracker;
         }
     }
 
     public class SpecialCharacter : Approver
     {
-        public override (string error, bool valid) Control(string password)
+        public override ErrorTracker Control(string password, ErrorTracker errorTracker)
         {
             var specialCharacters = "!@#$%^&*()-_+=[]{}|;:',.<>?/";
-            if (password.Any(c => !char.IsLetterOrDigit(c) && specialCharacters.Contains(c)))
+            if (password.Any(c => !char.IsLetterOrDigit(c) && specialCharacters.Contains(c)) && errorTracker.valid == true)
             {
-                //Next?.Control(password);
+                errorTracker.valid = true;
             }
             else
             {
-                errors+=("The password must have at least 1 special character \n");
-                aproved = false;
+                errorTracker.error+=("The password must have at least 1 special character \n");
+                errorTracker.valid = false;
             }
-            var result = Next?.Control(password);
-            if (result.HasValue)
-            {
-                errors += result.Value.Item1;
-                aproved = result.Value.Item2;
-            }
-            return (errors, aproved);
+            var result = Next?.Control(password, errorTracker);
+            return errorTracker;
         }
     }
 }
