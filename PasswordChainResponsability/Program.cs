@@ -45,8 +45,8 @@ namespace PasswordChainResponsability
 
     public class ErrorTracker
     {
-        public string error {get;set;}
-        public bool valid { get;set;}
+        public string error { get; set; }
+        public bool valid { get; set; }
 
         public ErrorTracker()
         {
@@ -64,10 +64,10 @@ namespace PasswordChainResponsability
             }
             else
             {
-                errorTracker.error+="The password must be at least 8 character long \n";
+                errorTracker.error += "The password must be at least 8 character long \n";
                 errorTracker.valid = false;
             }
-            
+
             var result = Next?.Control(password, errorTracker);
             return errorTracker;
         }
@@ -77,13 +77,13 @@ namespace PasswordChainResponsability
     {
         public override ErrorTracker Control(string password, ErrorTracker errorTracker)
         {
-            if (password.Count(char.IsDigit)>=2)
+            if (password.Count(char.IsDigit) >= 2)
             {
             }
             else
             {
-               errorTracker.error+="The password must have at least 2 number \n";
-               errorTracker.valid = false;
+                errorTracker.error += "The password must have at least 2 number \n";
+                errorTracker.valid = false;
             }
             var result = Next?.Control(password, errorTracker);
             return errorTracker;
@@ -99,7 +99,7 @@ namespace PasswordChainResponsability
             }
             else
             {
-                errorTracker.error+=("The password must have at least 1 upper case letter \n");
+                errorTracker.error += ("The password must have at least 1 upper case letter \n");
                 errorTracker.valid = false;
             }
             var result = Next?.Control(password, errorTracker);
@@ -117,7 +117,7 @@ namespace PasswordChainResponsability
             }
             else
             {
-                errorTracker.error+=("The password must have at least 1 special character \n");
+                errorTracker.error += ("The password must have at least 1 special character \n");
                 errorTracker.valid = false;
             }
             var result = Next?.Control(password, errorTracker);
