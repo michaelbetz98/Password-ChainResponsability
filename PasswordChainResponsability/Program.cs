@@ -50,7 +50,7 @@ namespace PasswordChainResponsability
 
         public ErrorTracker()
         {
-            error = "w";
+            error = "";
             valid = true;
         }
     }
@@ -59,9 +59,8 @@ namespace PasswordChainResponsability
     {
         public override ErrorTracker Control(string password, ErrorTracker errorTracker)
         {
-            if (password.Length >= 8 && errorTracker.valid == true)
+            if (password.Length >= 8)
             {
-                errorTracker.valid = true;
             }
             else
             {
@@ -78,9 +77,8 @@ namespace PasswordChainResponsability
     {
         public override ErrorTracker Control(string password, ErrorTracker errorTracker)
         {
-            if (password.Count(char.IsDigit)>=2 && errorTracker.valid == true)
+            if (password.Count(char.IsDigit)>=2)
             {
-                errorTracker.valid = true;
             }
             else
             {
@@ -96,9 +94,8 @@ namespace PasswordChainResponsability
     {
         public override ErrorTracker Control(string password, ErrorTracker errorTracker)
         {
-            if (password.Any(char.IsUpper) && errorTracker.valid == true)
+            if (password.Any(char.IsUpper))
             {
-                errorTracker.valid = true;
             }
             else
             {
@@ -115,9 +112,8 @@ namespace PasswordChainResponsability
         public override ErrorTracker Control(string password, ErrorTracker errorTracker)
         {
             var specialCharacters = "!@#$%^&*()-_+=[]{}|;:',.<>?/";
-            if (password.Any(c => !char.IsLetterOrDigit(c) && specialCharacters.Contains(c)) && errorTracker.valid == true)
+            if (password.Any(c => !char.IsLetterOrDigit(c) && specialCharacters.Contains(c)))
             {
-                errorTracker.valid = true;
             }
             else
             {
