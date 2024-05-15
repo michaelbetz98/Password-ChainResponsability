@@ -11,18 +11,25 @@
 
 
             lenght.SetSuccessor(nNumbers).SetSuccessor(upperCase).SetSuccessor(specialCharacter);
+
             Console.WriteLine("Write hte new password");
             string password = Console.ReadLine();
             lenght.Control(password);
+            Console.WriteLine(lenght.errors);
+            Console.WriteLine(lenght.aproved);
         }
     }
 
     public abstract class Approver
     {
+        public bool aproved = true;
+        public string errors = "";
         protected Approver? Next;
 
         public Approver SetSuccessor(Approver next)
         {
+            //aproved = next.aproved;
+            //errors = next.errors;
             Next = next;
             return Next;
         }
@@ -34,14 +41,17 @@
     {
         public override void Control(string password)
         {
+
             if (password.Length >= 8)
             {
-                Next?.Control(password);
+                //Next?.Control(password);
             }
             else
             {
-                Console.WriteLine("The password must be at least 8 character long");
+                errors="The password must be at least 8 character long \n" + errors;
+                aproved = false;
             }
+            Next?.Control(password);
         }
     }
 
@@ -51,12 +61,14 @@
         {
             if (password.Count(char.IsDigit)>=2)
             {
-                Next?.Control(password); 
+                //Next?.Control(password);
             }
             else
             {
-                Console.WriteLine("The password must have at least 2 number");
+               errors+="The password must have at least 2 number \n";
+               aproved = false;
             }
+            Next?.Control(password);
         }
     }
 
@@ -64,14 +76,16 @@
     {
         public override void Control(string password)
         {
-            if (!password.Any(char.IsUpper))
+            if (password.Any(char.IsUpper))
             {
-                Next?.Control(password);
+                //Next?.Control(password);
             }
             else
             {
-                Console.WriteLine("The password must have at least 1 upper case letter");
+                errors+=("The password must have at least 1 upper case letter \n");
+                aproved = false;
             }
+            Next?.Control(password);
         }
     }
 
@@ -82,12 +96,14 @@
             var specialCharacters = "!@#$%^&*()-_+=[]{}|;:',.<>?/";
             if (password.Any(c => !char.IsLetterOrDigit(c) && specialCharacters.Contains(c)))
             {
-                Next?.Control(password);
+                //Next?.Control(password);
             }
             else
             {
-                Console.WriteLine("The password must have at least 1 special character");
+                errors+=("The password must have at least 1 special character \n");
+                aproved = false;
             }
+            Next?.Control(password);
         }
     }
 }
